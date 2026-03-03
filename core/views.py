@@ -136,6 +136,26 @@ def resend_verification(request):
 
 
 def forgot_password(request):
+    # At the top of the function, add:
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(email=email)
+            # 🔥 TEMP FIX: Print link to logs
+            from django.utils import timezone
+            from .models import PasswordReset
+            reset = PasswordReset.objects.create(user=user)
+            reset_link = request.build_absolute_uri(
+                reverse('reset_password', args=[str(reset.token)])
+            )
+            print("=" * 60)
+            print("🔗 RESET LINK (TEMP):")
+            print(reset_link)
+            print("=" * 60)
+            messages.success(request, 'Check Render logs for reset link!')
+        except:
+            messages.success(request, 'If account exists, link in logs')
+        return redirect('login')
     """Handle forgot password request"""
     print("=" * 50)
     print("🔍 FORGOT PASSWORD VIEW CALLED")
