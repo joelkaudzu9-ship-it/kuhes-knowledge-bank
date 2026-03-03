@@ -71,29 +71,18 @@ def register(request):
             messages.error(request, 'Username already taken!')
             return redirect('register')
 
-        # Create user (inactive until email verified)
+        # Create user - 🔥 TEMPORARILY ACTIVE WITHOUT EMAIL VERIFICATION
         user = User.objects.create_user(
             username=username,
             email=email,
             password=password1
         )
-        user.is_active = False
+        user.is_active = True  # ← CHANGE THIS FROM False TO True
+        user.is_verified = True  # ← ADD THIS LINE
         user.save()
 
-        # Send verification email
-        try:
-            send_verification_email(user, request)
-            messages.success(request, 'Account created! Please check your email to verify your account.')
-        except Exception as e:
-            # If email fails, create token and show link for development
-            verification = EmailVerification.objects.create(user=user)
-            verification_link = request.build_absolute_uri(
-                reverse('verify_email', args=[str(verification.token)])
-            )
-            messages.warning(
-                request,
-                f'⚠️ Email could not be sent. Use this link to verify: {verification_link}'
-            )
+        # 🔥 SKIP EMAIL FOR NOW
+        messages.success(request, 'Account created! You can now log in.')
 
         return redirect('login')
 
@@ -232,23 +221,15 @@ def custom_logout(request):
     messages.success(request, 'You have been successfully logged out.')
     return redirect('index')
 
-
 class CustomLoginView(LoginView):
     template_name = 'core/login.html'
 
     def form_valid(self, form):
-        try:
-            messages.success(self.request, f'Welcome back, {form.get_user().username}!')
-            return super().form_valid(form)
-        except Exception as e:
-            import logging
-            logger = logging.getLogger(__name__)
-            logger.error(f"Login error: {e}", exc_info=True)
-            messages.error(self.request, 'An error occurred during login.')
-            return redirect('login')
+        messages.success(self.request, f'Welcome back, {form.get_user().username}!')
+        return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, 'Invalid email or password. Please try again.')
+        messages.error(self.request, 'Invalid email or password.')
         return super().form_invalid(form)
 
 
