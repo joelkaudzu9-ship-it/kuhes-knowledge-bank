@@ -198,3 +198,13 @@ LOGGING = {
         },
     },
 }
+# At the bottom of settings.py
+import os
+if os.environ.get('RENDER'):
+    print("=" * 50)
+    print("📧 EMAIL CONFIGURATION ON RENDER:")
+    print(f"EMAIL_HOST: {os.environ.get('EMAIL_HOST')}")
+    print(f"EMAIL_PORT: {os.environ.get('EMAIL_PORT')}")
+    print(f"EMAIL_HOST_USER: {os.environ.get('EMAIL_HOST_USER')}")
+    print(f"EMAIL_USE_TLS: {os.environ.get('EMAIL_USE_TLS')}")
+    print("=" * 50)

@@ -137,6 +137,14 @@ def resend_verification(request):
 
 def forgot_password(request):
     """Handle forgot password request"""
+    print("=" * 50)
+    print("🔍 FORGOT PASSWORD VIEW CALLED")
+    print(f"Method: {request.method}")
+    print("=" * 50)
+
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        print(f"Email submitted: {email}")
     if request.method == 'POST':
         email = request.POST.get('email')
 
